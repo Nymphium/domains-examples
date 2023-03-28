@@ -27,7 +27,10 @@
           utop = "*";
         };
 
-        query = devPackagesQuery // {};
+        query = devPackagesQuery // {
+          # fetch ocaml from nixpkgs, not from opam-repository (it can be done without build)
+          ocaml-system = "*";
+        };
 
         scope = on.buildOpamProject' {
           inherit pkgs;
@@ -35,10 +38,9 @@
         } src query;
 
         overlay = final: prev: {
-          # You can add overrides here
           ${package} = prev.${package}.overrideAttrs (_: {
-            # Prevent the ocaml dependencies from leaking into dependent environments
             doNixSupport = false;
+            with-test = true;
           });
         };
 
